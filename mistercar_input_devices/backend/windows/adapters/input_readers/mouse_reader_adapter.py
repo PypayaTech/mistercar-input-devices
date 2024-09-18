@@ -8,6 +8,9 @@ class MouseReaderAdapter:
     def get_cursor_position(self):
         return self.__mouse_reader.get_cursor_position()
 
+    def get_relative_movement(self):
+        return self.__mouse_reader.get_relative_movement()
+
     def get_button_states(self):
         return self.__mouse_reader.get_button_states()
 

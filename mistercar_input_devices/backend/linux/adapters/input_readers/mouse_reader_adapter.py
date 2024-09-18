@@ -7,6 +7,9 @@ class MouseReaderAdapter:
     def get_cursor_position(self):
         raise NotImplementedError
 
+    def get_relative_movement(self):
+        raise NotImplementedError
+
     def get_button_states(self):
         raise NotImplementedError
 

@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "mistercar-input-devices"
+version = "0.1.0"
+description = "Read and emulate keyboard, mouse, and gamepad"
+authors = ["PypayaTech"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/PypayaTech/mistercar-input-devices"
+repository = "https://github.com/PypayaTech/mistercar-input-devices"
+keywords = ["input reading", "input emulation", "GUI automation", "keyboard", "mouse", "gamepad"]
+classifiers = [
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+PyAutoGUI = "^0.9.54"
+pywin32 = {version = "^306", markers = "sys_platform == 'win32'"}
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

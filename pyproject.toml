@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "mistercar-input-devices"
-version = "0.2.1"
-description = "Read and emulate keyboard, mouse, and gamepad"
+version = "0.3.0"
+description = "Read and emulate keyboard, mouse, gamepad, and steering wheel"
 authors = ["PypayaTech"]
 license = "MIT"
 readme = "README.md"
@@ -21,6 +21,7 @@ classifiers = [
 python = "^3.10"
 PyAutoGUI = "^0.9.54"
 pywin32 = {version = "^306", markers = "sys_platform == 'win32'"}
+pywinusb = {version = ">=0.4.2", markers = "sys_platform == 'win32'"}
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

@@ -22,7 +22,9 @@ pip install mistercar-input-devices
 
 - Python 3.10 or higher
 
-#### Windows-specific setup
+#### Windows gamepad support setup
+
+The following steps are only necessary if you plan to use gamepad features on Windows:
 
 1. Disable driver signature enforcement. This is necessary for installing unsigned drivers. Follow the instructions in this guide: [How to disable driver signature enforcement on Windows 10](https://medium.com/@pypaya_tech/unlock-your-windows-a-guide-to-disabling-driver-signature-enforcement-342103d51997)
 

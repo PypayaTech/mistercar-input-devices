@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mistercar-input-devices"
-version = "0.3.0"
+version = "0.4.0"
 description = "Read and emulate keyboard, mouse, gamepad, and steering wheel"
 authors = ["PypayaTech"]
 license = "MIT"

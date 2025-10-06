@@ -81,12 +81,31 @@ global_mouse_emulator.left_click()
 from mistercar_input_devices.input_readers.gamepad_reader import global_gamepad_reader
 from mistercar_input_devices.input_emulators.gamepad_emulator import global_gamepad_emulator
 
-# Read gamepad state
-gamepad_state = global_gamepad_reader.get_control_state('AxisLx')
-print(f"Left stick X-axis: {gamepad_state}")
+# Read gamepad sticks
+left_stick = global_gamepad_reader.get_left_stick()
+print(f"Left stick: {left_stick}")  # Returns (x, y) tuple
+
+# Read individual stick axes
+left_x = global_gamepad_reader.get_left_stick_x()
+print(f"Left stick X-axis: {left_x}")
+
+# Read triggers
+triggers = global_gamepad_reader.get_triggers()
+print(f"Triggers (left, right): {triggers}")
+
+# Read face buttons
+face_buttons = global_gamepad_reader.get_face_buttons()
+print(f"Face buttons [A, B, X, Y]: {face_buttons}")
+
+# Read individual buttons
+if global_gamepad_reader.get_button_a():
+    print("A button is pressed")
 
 # Emulate gamepad input
-global_gamepad_emulator.emulate_control('AxisLx', 0.5)  # Move left stick halfway to the right
+global_gamepad_emulator.emulate_left_stick(0.5, -0.3)  # Move left stick
+global_gamepad_emulator.emulate_left_trigger(0.8)      # Press left trigger
+global_gamepad_emulator.emulate_button_a(True)         # Press A button
+global_gamepad_emulator.emulate_button_a(False)        # Release A button
 ```
 
 ### 🏎️ Racing Wheel

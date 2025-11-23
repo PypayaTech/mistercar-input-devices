@@ -40,11 +40,11 @@ class WheelButton(IntEnum):
 @dataclass
 class WheelState:
     """Represents the current state of a racing wheel"""
-    # Main controls (-1.0 to 1.0 for steering, 0.0 to 1.0 for pedals)
-    steering: float = 0.0  # -1.0 = full left, 1.0 = full right
-    throttle: float = 0.0  # 0.0 = no throttle, 1.0 = full throttle
-    brake: float = 0.0  # 0.0 = no brake, 1.0 = full brake
-    clutch: float = 0.0  # 0.0 = no clutch, 1.0 = full clutch
+    # Main controls
+    steering: float = 0.0  # -1.0 (full left) to 1.0 (full right)
+    throttle: float = 0.0  # 0.0 (released) to 1.0 (full press)
+    brake: float = 0.0     # 0.0 (released) to 1.0 (full press)
+    clutch: float = 0.0    # 0.0 (released) to 1.0 (full press)
 
     # Button states
     buttons: Dict[WheelButton, bool] = None
@@ -78,7 +78,12 @@ class WheelDevice(ABC):
 
     @abstractmethod
     def get_pedals(self) -> Tuple[float, float, float]:
-        """Get pedal positions (throttle, brake, clutch) from 0.0 to 1.0"""
+        """Get pedal positions from 0.0 to 1.0.
+
+        Returns:
+            Tuple[float, float, float]: (throttle, brake, clutch)
+                All values range from 0.0 (released) to 1.0 (fully pressed)
+        """
         pass
 
     @abstractmethod

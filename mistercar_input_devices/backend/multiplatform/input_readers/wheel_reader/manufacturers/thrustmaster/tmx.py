@@ -21,17 +21,13 @@ class TMXWheel(WheelDevice):
             raise NotImplementedError("Unsupported platform")
 
     def set_pedal_mode(self, mode: str) -> None:
-        """Set the pedal mode (normal or swapped).
+        """Set pedal signal mapping to match the MODE LED on your wheel.
 
-        In normal mode:
-            - Right pedal is throttle
-            - Left pedal is clutch
-        In swapped mode:
-            - Right pedal is clutch
-            - Left pedal is throttle
+        Green LED (normal):  Left=Clutch, Middle=Brake, Right=Throttle
+        Red LED (swapped):   Left=Throttle, Middle=Brake, Right=Clutch
 
         Args:
-            mode: Either "normal" or "swapped"
+            mode: Either "normal" (green LED) or "swapped" (red LED)
 
         Raises:
             ValueError: If mode is not "normal" or "swapped"
@@ -84,7 +80,11 @@ class TMXWheel(WheelDevice):
         return state.steering
 
     def get_pedals(self) -> Tuple[float, float, float]:
-        """Get pedal positions (throttle, brake, clutch) from 0.0 to 1.0"""
+        """Get pedal positions from 0.0 to 1.0.
+
+        Returns:
+            Tuple[float, float, float]: (throttle, brake, clutch)
+        """
         state = self.get_state()
         return state.throttle, state.brake, state.clutch
 

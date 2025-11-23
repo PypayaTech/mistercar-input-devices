@@ -27,10 +27,6 @@ class WheelTester:
 
         return False
 
-    def _format_analog_value(self, name: str, value: float) -> str:
-        """Format analog value for display."""
-        return f"{name}: {value:7.3f}"
-
     def _format_buttons(self, buttons: Dict[WheelButton, bool]) -> str:
         """Format button states for display."""
         active_buttons = [button.name for button, pressed in buttons.items() if pressed]
@@ -43,19 +39,13 @@ class WheelTester:
         if not self._has_state_changed(state, self.last_state):
             return
 
-        # Clear line and move cursor to start
-        print('\r' + ' ' * 100 + '\r', end='')
+        # Print analog values in physical order: Steering, Clutch, Brake, Throttle
+        print(f"Steering: {state.steering:7.3f} | "
+              f"Clutch: {state.clutch:7.3f} | "
+              f"Brake: {state.brake:7.3f} | "
+              f"Throttle: {state.throttle:7.3f}")
 
-        # Print analog values
-        analog_values = [
-            self._format_analog_value("Steering", state.steering),
-            self._format_analog_value("Throttle", state.throttle),
-            self._format_analog_value("Brake", state.brake),
-            self._format_analog_value("Clutch", state.clutch)
-        ]
-        print(" | ".join(analog_values))
-
-        # Print active buttons on new line
+        # Print active buttons
         print(self._format_buttons(state.buttons))
         print()  # Empty line for better readability
 
@@ -67,6 +57,9 @@ def main():
     print("Press Ctrl+C to exit\n")
     print("Interact with the wheel to see state changes...")
     print("=" * 80)
+
+    # Uncomment if your wheel shows RED LED (swapped mode):
+    # global_tmx_wheel.set_pedal_mode("swapped")
 
     tester = WheelTester()
 

@@ -19,11 +19,36 @@ class TMXWheelAdapter:
         self._pedal_mode = "normal"  # or "swapped"
         self._initialize_device()
 
+    def get_pedal_mode(self) -> str:
+        """Get current pedal mode.
+
+        Returns:
+            str: Current pedal mode ("normal" or "swapped")
+        """
+        return self._pedal_mode
+
     def set_pedal_mode(self, mode: str) -> None:
-        """Set the pedal mode.
+        """Set pedal signal mapping to match the MODE LED on your wheel.
+
+        The TMX wheel MODE button swaps the left and right pedal signals:
+
+        Green LED (normal mode):
+            Left pedal → Clutch signal
+            Middle pedal → Brake signal
+            Right pedal → Throttle signal
+
+        Red LED (swapped mode):
+            Left pedal → Throttle signal
+            Middle pedal → Brake signal
+            Right pedal → Clutch signal
+
+        Use swapped mode if your pedals are physically reversed or you
+        prefer a different arrangement.
+
+        Important: Set this to match the actual LED color on your wheel!
 
         Args:
-            mode: Either "normal" or "swapped"
+            mode: Either "normal" (green LED) or "swapped" (red LED)
 
         Raises:
             ValueError: If mode is not "normal" or "swapped"
@@ -63,12 +88,13 @@ class TMXWheelAdapter:
     def _parse_pedals(self, data: bytes) -> Tuple[float, float, float]:
         """Parse pedal values from raw data.
 
-        Each pedal uses two bytes:
-        - Main value byte
-        - Overflow byte
+        Pedal byte mapping:
+        - Bytes 3,4: Middle pedal (always Brake)
+        - Bytes 5,6: Left pedal (Clutch in normal mode, Throttle in swapped mode)
+        - Bytes 7,8: Right pedal (Throttle in normal mode, Clutch in swapped mode)
 
-        The combined 16-bit value starts high when pedal is unpressed
-        and decreases to 0 when fully pressed.
+        Each pedal is a 16-bit little-endian value that starts high (~1023) when
+        unpressed and decreases to 0 when fully pressed.
 
         Returns:
             Tuple[float, float, float]: (throttle, brake, clutch) values from 0.0 to 1.0
@@ -76,22 +102,20 @@ class TMXWheelAdapter:
         if not data or len(data) < 9:
             return 0.0, 0.0, 0.0
 
-        # Calculate raw values (combine overflow and main bytes)
-        brake_raw = (data[4] << 8) | data[3]  # bytes 3,4 for brake
+        # Brake is always middle pedal (bytes 3,4)
+        brake_raw = (data[4] << 8) | data[3]
 
-        # Throttle and clutch bytes depend on mode
+        # Left and right pedal signal assignment depends on mode
         if self._pedal_mode == "normal":
-            throttle_raw = (data[6] << 8) | data[5]  # bytes 5,6 for throttle
-            clutch_raw = (data[8] << 8) | data[7]  # bytes 7,8 for clutch
+            # Green LED: Standard layout
+            clutch_raw = (data[6] << 8) | data[5]    # bytes 5,6 = left pedal
+            throttle_raw = (data[8] << 8) | data[7]  # bytes 7,8 = right pedal
         else:  # swapped mode
-            throttle_raw = (data[8] << 8) | data[7]  # bytes 7,8 for throttle
-            clutch_raw = (data[6] << 8) | data[5]  # bytes 5,6 for clutch
+            # Red LED: Swapped layout
+            throttle_raw = (data[6] << 8) | data[5]  # bytes 5,6 = left pedal
+            clutch_raw = (data[8] << 8) | data[7]    # bytes 7,8 = right pedal
 
         # Convert to 0.0-1.0 range and invert (since raw values decrease when pressed)
-        # Also clamp values between 0.0 and 1.0 for safety
-        def normalize_pedal(value: int) -> float:
-            return max(0.0, min(1.0, 1.0 - (value / MAX_VALUE)))
-
         return (
             max(0.0, min(1.0, 1.0 - (throttle_raw / self.MAX_PEDAL_VALUE))),
             max(0.0, min(1.0, 1.0 - (brake_raw / self.MAX_PEDAL_VALUE))),
